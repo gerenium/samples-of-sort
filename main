@@ -1,0 +1,257 @@
+
+import numpy as np
+import random
+import math
+import matplotlib.pyplot as plt
+
+n = 10   #размер массива
+k = 1000000000   # диапазон реализаций элементов массива
+
+array1 = np.random.randint(0, k, n)
+array2, array3, array4, array5 = array1.copy(), array1.copy(), array1.copy(), array1.copy()
+#===============================================
+print('Реализация quick sort')
+print('Исходный массив:')
+print(array1)
+
+def partition(array1, b1, b2):
+    opora = b1
+    for i in range(b1+1, b2+1):
+        if array1[i] <= array1[b1]:
+            opora +=1
+            array1[i], array1[opora] = array1[opora], array1[i]
+    array1[opora], array1[b1] = array1[b1], array1[opora]
+    return opora
+
+
+def quick_sort(array1, b1 = 0, b2 = None):
+    if b2 is None:
+        b2 = len(array1) - 1
+
+    def quick_sort_2(array1, b1, b2):
+        if b1 >= b2:
+            return
+        opora = partition(array1, b1, b2)
+        quick_sort_2(array1, b1, opora - 1)
+        quick_sort_2(array1, opora + 1, b2)
+    return quick_sort_2(array1, b1, b2)
+
+
+quick_sort(array1)
+print("отсортированнный массив")
+print(array1)
+print('\n\n')
+
+#=================================================
+print('Реализация merge sort')
+print("Исходный массив")
+print(array2)
+
+def merge(left_ar, right_ar):
+    i, j = 0, 0
+    result = []
+    l_l = len(left_ar)
+    l_r = len(right_ar)
+    while i < l_l and j < l_r:
+        if left_ar[i] < right_ar[j]:
+            result.append(left_ar[i])
+            i += 1
+        else:
+            result.append(right_ar[j])
+            j += 1
+    while i < l_l:
+        result.append(left_ar[i])
+        i +=1
+    while j < l_r:
+        result.append(right_ar[j])
+        j += 1
+    return result
+
+def merge_sort(array2):
+    l = len(array2)
+    if l < 2:
+        return array2
+    else:
+        med = math.ceil(l/2)
+        left_ar = merge_sort(array2[:med])
+        right_ar = merge_sort(array2[med:])
+        return merge(left_ar, right_ar)
+
+print('Отсортированный массив:')
+print(merge_sort(array2))
+
+print('\n\n')
+#=============================================
+print('Реализация heap sort')
+print("Исходный массив")
+print(array3)
+
+def heap(array3, n, i):
+    largest = i 
+    l = 2 * i + 1  
+    r = 2 * i + 2   
+    if l < n and array3[i] < array3[l]:
+        largest = l
+
+    if r < n and array3[largest] < array3[r]:
+        largest = r
+
+    if largest != i:
+        array3[i], array3[largest] = array3[largest], array3[i] 
+        heap(array3, n, largest)
+
+
+def heap_sort(array3):
+    n = len(array3)
+    for i in range(n, -1, -1):
+        heap(array3, n, i)
+
+    for i in range(n-1, 0, -1):
+        array3[i], array3[0] = array3[0], array3[i]  
+        heap(array3, i, 0)
+
+print ("Отсортированный массив:")
+heap_sort(array3)
+print(array3)
+print('\n\n')
+#============================================
+print('Сравнение результатов')
+print("Затраченное время")
+print('~~Пожалуйста, подождите~~')
+import time
+
+k = 1000000000
+a, b, c, size =[],[],[],[100, 10000, 100000]
+m = 3
+for i in range(m):
+    test_array = np.random.randint(0, k, size[i])
+
+    start_time = time.process_time()
+    quick_sort(test_array)
+    a.append(time.process_time() - start_time)
+
+    start_time = time.process_time()
+    merge_sort(test_array)
+    b.append(time.process_time() - start_time)
+
+    start_time = time.process_time()
+    heap_sort(test_array)
+    c.append(time.process_time() - start_time)
+
+
+a.append('quick sort')
+b.append('merge sort')
+c.append('heap sort')
+
+title=['100 элементов', "10000 элементов", "100000 элементов", 'Название сортировки']
+
+print(title)
+print(a)
+print(b)
+print(c)
+
+a1, b1, c1 = a[:3], b[:3], c[:3]
+plt.plot(size, a1, color="g")
+plt.plot(size, b1, color="r")
+plt.plot(size, c1, color="b")
+plt.xlabel(u'Размер', fontsize= 13)
+plt.ylabel(u'Время', fontsize= 13)
+plt.title('Зависимость', fontsize= 16, fontweight = 'heavy' )
+plt.show()
+
+
+
+
+#===================
+razmer = 100
+array4 = np.random.randint(0, k, razmer)
+array5 = array4.copy()
+a.clear()
+b.clear()
+print('Ведите К для находения к-ой порядковой статистики')
+print('Размер массива:', razmer)
+print('!К находится как номер элемента массива, а не по индексу массива!')
+k = int(input())
+
+def kSmallest(arr, l, r, k): 
+    if (k > 0 and k <= r - l + 1): 
+        pos = randomD(arr, l, r)  
+        if (pos - l == k - 1): 
+            return arr[pos] 
+        if (pos - l > k - 1):
+            return kSmallest(arr, l, pos - 1, k) 
+        return kSmallest(arr, pos + 1, r, 
+                        k - pos + l - 1)
+    return 999999999999
+ 
+def replace(arr, a, b): 
+    temp = arr[a] 
+    arr[a] = arr[b] 
+    arr[b] = temp 
+ 
+
+def partition(arr, l, r): 
+    x = arr[r] 
+    i = l 
+    for j in range(l, r): 
+        if (arr[j] <= x): 
+            replace(arr, i, j) 
+            i += 1
+    replace(arr, i, r) 
+    return i 
+ 
+def randomD(arr, l, r): 
+    n = r - l + 1
+    pivot = int(random.random() * n) 
+    replace(arr, l + pivot, r) 
+    return partition(arr, l, r) 
+ 
+if __name__ == '__main__': 
+    n = len(array5) 
+    start_time = time.process_time()
+    kSmallest(array5, 0, n - 1, k)
+    a.append(time.process_time() - start_time)
+    z = kSmallest(array5, 0, n - 1, k)
+    a.append(z)
+
+#======================
+start_time = time.process_time()
+np.partition(np.asarray(array4), k - 1)[k - 1]
+b.append(time.process_time() - start_time)
+z = np.partition(np.asarray(array4), k - 1)[k - 1]
+b.append(z)
+#======================
+title=[ 'Затраченное время', 'Элемент k-ой порядковой статистики', '     Название сортировки     ']
+a.append('Реализованная сортировка')
+b.append('Сортировка из библиотеки')
+
+print(title)
+print(a)
+print(b)
+
+
+
+a, b, c, s, size  =[],[],[], [], [100, 10000, 100000]
+for i in range(len(size)):
+    a.append(4 + 3*size[i]/2)
+    a2 = size[i]
+    s2 = 0
+    while a2>1:
+     s2 += a2
+     a2 = a2/2
+    b.append(s2)
+    c.append(2+5*size[i]/3)
+
+
+
+a.append('quick sort')
+b.append('merge sort')
+c.append('heap sort')
+a1, b1, c1 = a[:3], b[:3], c[:3]
+plt.plot(size, a1, color="g")
+plt.plot(size, b1, color="r")
+plt.plot(size, c1, color="b")
+plt.xlabel(u'Размер массива', fontsize= 13)
+plt.ylabel(u'Объем памяти', fontsize= 13)
+plt.title('Зависимость', fontsize= 16, fontweight = 'heavy' )
+plt.show()
